@@ -1,20 +1,10 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { blurOut } from "../../utils/styles/animations";
-import { useSession } from "next-auth/client";
+import { blurOut } from "utils/styles/animations";
+import { signIn, signOut, useSession } from "next-auth/client";
 
 function Header({ setIsNavOpen, setQuery }) {
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const [theme, setTheme] = useState("light");
-	const nextTheme = theme === "light" ? "dark" : "light";
 	const [session, isLoading] = useSession();
-
-	useEffect(() => {
-		document.body.dataset.theme = theme;
-	}, [theme]);
-	function toggleTheme() {
-		setTheme(nextTheme);
-	}
 
 	function handleSubmit(e) {
 		e.preventDefault();
@@ -22,9 +12,6 @@ function Header({ setIsNavOpen, setQuery }) {
 		setQuery(query.value);
 	}
 	if (isLoading) return null;
-	const {
-		user: { name, email, image },
-	} = session;
 
 	return (
 		<header
@@ -96,14 +83,37 @@ function Header({ setIsNavOpen, setQuery }) {
 					<i className="fas fa-search"></i>
 				</button>
 			</form>
-			<div
+			{session ? (
+				<AuthenticatedInfo session={session} />
+			) : (
+				<UnAuthenticatedInfo />
+			)}
+		</header>
+	);
+}
+
+function AuthenticatedInfo({ session }) {
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [theme, setTheme] = useState("light");
+	const nextTheme = theme === "light" ? "dark" : "light";
+	useEffect(() => {
+		document.body.dataset.theme = theme;
+	}, [theme]);
+	function toggleTheme() {
+		setTheme(nextTheme);
+	}
+	const {
+		user: { name, email, image },
+	} = session;
+	return (
+		<div
+			css={`
+				position: relative;
+			`}
+		>
+			<button
+				onClick={() => setIsMenuOpen((prev) => !prev)}
 				css={`
-					position: relative;
-				`}
-			>
-				<button
-					onClick={() => setIsMenuOpen((prev) => !prev)}
-					css={`
 						border: none;
 						background: none;
 						width: 5rem;
@@ -130,102 +140,124 @@ function Header({ setIsNavOpen, setQuery }) {
 
 						}
 					`}
+			>
+				<img
+					css={`
+						width: 100%;
+						height: 100%;
+						border-radius: 50%;
+						vertical-align: middle;
+					`}
+					src={image}
+					alt=""
+				/>
+			</button>
+			<div
+				css={`
+					position: absolute;
+					background: var(--colors-background--sub);
+					top: 100%;
+					right: 0;
+					${!isMenuOpen ? "display:none" : null}
+				`}
+			>
+				<div
+					css={`
+						display: flex;
+						align-items: center;
+						padding: 1.5rem 1rem;
+						border-bottom: solid 1px rgba(50, 50, 50, 0.6);
+					`}
 				>
 					<img
 						css={`
-							width: 100%;
-							height: 100%;
+							width: 5rem;
+							height: 5rem;
 							border-radius: 50%;
 							vertical-align: middle;
 						`}
 						src={image}
 						alt=""
 					/>
-				</button>
-				<div
-					css={`
-						position: absolute;
-						background: var(--colors-background--sub);
-						top: 100%;
-						right: 0;
-						${!isMenuOpen ? "display:none" : null}
-					`}
-				>
 					<div
 						css={`
-							display: flex;
-							align-items: center;
-							padding: 1.5rem 1rem;
-							border-bottom: solid 1px rgba(50, 50, 50, 0.6);
+							padding: 0 1rem;
+							text-align: start;
 						`}
 					>
-						<img
+						<h3
 							css={`
-								width: 5rem;
-								height: 5rem;
-								border-radius: 50%;
-								vertical-align: middle;
-							`}
-							src={image}
-							alt=""
-						/>
-						<div
-							css={`
-								padding: 0 1rem;
-								text-align: start;
+								font-size: 1.5rem;
+								color: var(--colors-text--main);
 							`}
 						>
-							<h3
-								css={`
-									font-size: 1.5rem;
-									color: var(--colors-text--main);
-								`}
-							>
-								{name}
-							</h3>
-							<h4
-								css={`
-									font-size: 1.3rem;
-									color: var(--colors-text--main);
-								`}
-							>
-								{email}
-							</h4>
-						</div>
+							{name}
+						</h3>
+						<h4
+							css={`
+								font-size: 1.3rem;
+								color: var(--colors-text--main);
+							`}
+						>
+							{email}
+						</h4>
 					</div>
-					<ul>
-						<li
-							css={`
-								padding: 1rem;
-								transition: background 0.25s;
-								color: var(--colors-text--main);
-								&:hover {
-									cursor: pointer;
-									background: var(--colors-background--list);
-								}
-							`}
-						>
-							<i className="fas fa-sign-out-alt"></i>
-							Sign Out
-						</li>
-						<li
-							onClick={toggleTheme}
-							css={`
-								padding: 1rem;
-								transition: background 0.25s;
-								color: var(--colors-text--main);
-								&:hover {
-									background: var(--colors-background--list);
-									cursor: pointer;
-								}
-							`}
-						>
-							<i className="fas fa-moon"></i>Appearance: Light
-						</li>
-					</ul>
 				</div>
+				<ul>
+					<li
+						css={`
+							padding: 1rem;
+							transition: background 0.25s;
+							color: var(--colors-text--main);
+							&:hover {
+								cursor: pointer;
+								background: var(--colors-background--list);
+							}
+						`}
+					>
+						<i className="fas fa-sign-out-alt"></i>
+						Sign Out
+					</li>
+					<li
+						onClick={toggleTheme}
+						css={`
+							padding: 1rem;
+							transition: background 0.25s;
+							color: var(--colors-text--main);
+							&:hover {
+								background: var(--colors-background--list);
+								cursor: pointer;
+							}
+						`}
+					>
+						<i className="fas fa-moon"></i>Appearance: Light
+					</li>
+				</ul>
 			</div>
-		</header>
+		</div>
+	);
+}
+
+function UnAuthenticatedInfo() {
+	return (
+		<div
+			css={`
+				position: relative;
+			`}
+		>
+			<button
+				onClick={() => signIn()}
+				css={`
+					border: solid 1px rgba(200, 200, 200, 0.7);
+					color: var(--colors-text--main);
+					background: none;
+					padding: 1rem;
+					border-radius: 5px;
+				`}
+			>
+				<i className="fab fa-google"></i>Login
+			</button>
+		</div>
 	);
 }
 

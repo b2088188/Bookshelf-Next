@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import styled from "styled-components/macro";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { BOOKS_SEARCH_REQUESTED } from "../actions/types";
+import { BOOKS_SEARCH_REQUESTED } from "actions/types";
 import { getSession } from "next-auth/client";
-import BookRow from "../components/BookRow";
-import { FullPageSpinner } from "../components/Spinner";
+import BookRow from "components/BookRow";
+import { FullPageSpinner } from "components/Spinner";
 
 function Discover() {
 	const {

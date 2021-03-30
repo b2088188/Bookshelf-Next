@@ -1,7 +1,4 @@
-import {
-	BOOKS_SEARCH_REQUESTED,
-	BOOKS_SEARCH_RESOLVED,
-} from "../actions/types";
+import { BOOKS_SEARCH_REQUESTED, BOOKS_SEARCH_RESOLVED } from "actions/types";
 
 let InitialState = {
 	books: [],

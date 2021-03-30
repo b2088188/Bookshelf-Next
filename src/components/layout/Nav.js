@@ -15,7 +15,7 @@ function Nav({ isNavOpen }) {
 			<NavLink href="/list" isNavOpen={isNavOpen}>
 				<i className="fas fa-book"></i>Reading List
 			</NavLink>
-			<NavLink href="/finished" isNavOpen={isNavOpen}>
+			<NavLink href="/finished-list" isNavOpen={isNavOpen}>
 				<i className="far fa-check-square"></i>Finished Books
 			</NavLink>
 			<NavLink href="/discover" isNavOpen={isNavOpen}>

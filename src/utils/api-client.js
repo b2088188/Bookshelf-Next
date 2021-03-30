@@ -1,3 +1,6 @@
+import { useCallback } from "react";
+import { useSession } from "next-auth/client";
+
 async function client(
   endpoint,
   { data, token, headers: customHeaders, ...customConfig } = {}
@@ -25,4 +28,11 @@ async function client(
   );
 }
 
-export { client };
+function useClient() {
+  const [session, isLoading] = useSession();
+  return useCallback(function (endpoint, config) {
+    return client(endpoint, { ...config });
+  }, []);
+}
+
+export { client, useClient };

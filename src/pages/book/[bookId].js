@@ -1,6 +1,6 @@
-import React from "react";
 import styled from "styled-components/macro";
-import { client } from "../../utils/api-client";
+import { client } from "utils/api-client";
+import StatusButton from "components/StatusButton";
 
 function Book({ book }) {
 	return (
@@ -71,27 +71,7 @@ function Book({ book }) {
 								justify-content: space-around;
 							`}
 						>
-							<button
-								css={`
-									color: var(--colors-text--main);
-									font-size: 1.7rem;
-									background: none;
-									border: solid 1px rgba(200, 200, 200, 0.7);
-									padding: 1rem;
-									border-radius: 50%;
-									display: flex;
-									align-items: center;
-									&:hover {
-										color: #3f5eb5;
-										cursor: pointer;
-									}
-									&:focus {
-										outline: none;
-									}
-								`}
-							>
-								<i className="fas fa-plus-circle"></i>
-							</button>
+							<StatusButton />
 						</div>
 					</div>
 					<div

@@ -1,5 +1,5 @@
 import styled from "styled-components/macro";
-import { rotate } from "../utils/styles/animations";
+import { rotate } from "utils/styles/animations";
 
 function FullPageSpinner() {
 	return (

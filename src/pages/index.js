@@ -3,7 +3,7 @@ import {
   ModalOpenButton,
   ModalCloseButton,
   ModalContent,
-} from "../components/Modal";
+} from "components/Modal";
 import styled from "styled-components/macro";
 
 function Home() {
@@ -187,6 +187,14 @@ function Home() {
       </div>
     </div>
   );
+}
+
+export function getServerSideProps() {
+  return {
+    redirect: {
+      destination: "/discover",
+    },
+  };
 }
 
 export default Home;

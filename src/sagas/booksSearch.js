@@ -1,9 +1,6 @@
 import { call, put, takeEvery } from "redux-saga/effects";
-import { client } from "../utils/api-client";
-import {
-	BOOKS_SEARCH_RESOLVED,
-	BOOKS_SEARCH_REQUESTED,
-} from "../actions/types";
+import { client } from "utils/api-client";
+import { BOOKS_SEARCH_RESOLVED, BOOKS_SEARCH_REQUESTED } from "actions/types";
 
 function* fetchBookSearch(action) {
 	try {
