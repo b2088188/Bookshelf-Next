@@ -1,22 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components/macro";
 import Head from "next/head";
 import GlobalStyle from "components/styles/GlobalStyle";
 import Header from "components/layout/Header";
 import Nav from "components/layout/Nav";
-import { createStore, applyMiddleware } from "redux";
-import createSagaMiddleware from "redux-saga";
-import { Provider } from "react-redux";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Hydrate } from "react-query/hydration";
 import { Provider as AuthProvider } from "next-auth/client";
-import reducers from "reducers";
-import sagas from "sagas";
-const sagaMiddleware = createSagaMiddleware();
-const store = createStore(reducers, applyMiddleware(sagaMiddleware));
-sagaMiddleware.run(sagas);
 
 function MyApp({ Component, pageProps }) {
+  const queryClientRef = useRef();
+  if (!queryClientRef.current) queryClientRef.current = new QueryClient();
   return (
-    <Provider store={store}>
+    <>
       <GlobalStyle />
       <Head>
         <link
@@ -31,13 +27,16 @@ function MyApp({ Component, pageProps }) {
         />
         <script src="https://apis.google.com/js/api.js"></script>
       </Head>
-
-      <AuthenticatedApp>
-        <AuthProvider session={pageProps.session}>
-          <Component {...pageProps} />
-        </AuthProvider>
-      </AuthenticatedApp>
-    </Provider>
+      <QueryClientProvider client={queryClientRef.current}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <AuthenticatedApp>
+            <AuthProvider session={pageProps.session}>
+              <Component {...pageProps} />
+            </AuthProvider>
+          </AuthenticatedApp>
+        </Hydrate>
+      </QueryClientProvider>
+    </>
   );
 }
 

@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import styled from "styled-components/macro";
 import { blurOut } from "utils/styles/animations";
 import { signIn, signOut, useSession } from "next-auth/client";
 
-function Header({ setIsNavOpen, setQuery }) {
+function Header({ setIsNavOpen }) {
 	const [session, isLoading] = useSession();
-
+	const { push } = useRouter();
 	function handleSubmit(e) {
 		e.preventDefault();
 		const { query } = e.target.elements;
-		setQuery(query.value);
+		push(`/discover?q=${query.value}`);
 	}
 	if (isLoading) return null;
 

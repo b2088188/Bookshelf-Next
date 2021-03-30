@@ -20,4 +20,18 @@ function FullPageSpinner() {
 	);
 }
 
-export { FullPageSpinner };
+function Spinner() {
+	return (
+		<div
+			css={`
+				& > * {
+					animation: ${rotate} 1s linear infinite;
+				}
+			`}
+		>
+			<i className="fas fa-spinner"></i>
+		</div>
+	);
+}
+
+export { FullPageSpinner, Spinner };

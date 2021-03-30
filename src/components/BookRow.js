@@ -95,7 +95,7 @@ function BookRow({ book }) {
 					justify-content: space-around;
 				`}
 			>
-				<StatusButton />
+				<StatusButton book={book} />
 			</div>
 		</li>
 	);
