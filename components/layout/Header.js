@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { blurOut } from "../../utils/styles/animations";
+import { useSession } from "next-auth/client";
 
 function Header({ setIsNavOpen, setQuery }) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-
 	const [theme, setTheme] = useState("light");
 	const nextTheme = theme === "light" ? "dark" : "light";
+	const [session, isLoading] = useSession();
 
 	useEffect(() => {
 		document.body.dataset.theme = theme;
@@ -20,6 +21,10 @@ function Header({ setIsNavOpen, setQuery }) {
 		const { query } = e.target.elements;
 		setQuery(query.value);
 	}
+	if (isLoading) return null;
+	const {
+		user: { name, email, image },
+	} = session;
 
 	return (
 		<header
@@ -33,6 +38,7 @@ function Header({ setIsNavOpen, setQuery }) {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
+				z-index: 100;
 			`}
 		>
 			<button
@@ -132,7 +138,7 @@ function Header({ setIsNavOpen, setQuery }) {
 							border-radius: 50%;
 							vertical-align: middle;
 						`}
-						src="https://yt3.ggpht.com/yti/ANoDKi7yHzca6gpW_0zVuCuBIVa2vTGiDeBNrvysVw=s88-c-k-c0x00ffffff-no-rj-mo"
+						src={image}
 						alt=""
 					/>
 				</button>
@@ -160,7 +166,7 @@ function Header({ setIsNavOpen, setQuery }) {
 								border-radius: 50%;
 								vertical-align: middle;
 							`}
-							src="https://yt3.ggpht.com/yti/ANoDKi7yHzca6gpW_0zVuCuBIVa2vTGiDeBNrvysVw=s88-c-k-c0x00ffffff-no-rj-mo"
+							src={image}
 							alt=""
 						/>
 						<div
@@ -175,7 +181,7 @@ function Header({ setIsNavOpen, setQuery }) {
 									color: var(--colors-text--main);
 								`}
 							>
-								lin lin
+								{name}
 							</h3>
 							<h4
 								css={`
@@ -183,7 +189,7 @@ function Header({ setIsNavOpen, setQuery }) {
 									color: var(--colors-text--main);
 								`}
 							>
-								wbccfh16@gmail.com
+								{email}
 							</h4>
 						</div>
 					</div>

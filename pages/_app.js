@@ -4,12 +4,19 @@ import Head from "next/head";
 import GlobalStyle from "../components/styles/GlobalStyle";
 import Header from "../components/layout/Header";
 import Nav from "../components/layout/Nav";
+import { createStore, applyMiddleware } from "redux";
+import createSagaMiddleware from "redux-saga";
+import { Provider } from "react-redux";
+import { Provider as AuthProvider } from "next-auth/client";
+import reducers from "../reducers";
+import sagas from "../sagas";
+const sagaMiddleware = createSagaMiddleware();
+const store = createStore(reducers, applyMiddleware(sagaMiddleware));
+sagaMiddleware.run(sagas);
 
 function MyApp({ Component, pageProps }) {
-  const [isNavOpen, setIsNavOpen] = useState(false);
-  const [query, setQuery] = useState("");
   return (
-    <>
+    <Provider store={store}>
       <GlobalStyle />
       <Head>
         <link
@@ -24,36 +31,49 @@ function MyApp({ Component, pageProps }) {
         />
         <script src="https://apis.google.com/js/api.js"></script>
       </Head>
+
+      <AuthenticatedApp>
+        <AuthProvider session={pageProps.session}>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </AuthenticatedApp>
+    </Provider>
+  );
+}
+
+function AuthenticatedApp({ children }) {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  return (
+    <div
+      css={`
+        background: var(--colors-background--main);
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: 10rem 1fr;
+        grid-template-columns: [sidebar-start] ${isNavOpen ? "25rem" : "8rem"} [sidebar-end content-start] 1fr [content-end];
+      `}
+    >
+      <Header setIsNavOpen={setIsNavOpen} setQuery={setQuery} />
       <div
         css={`
-          background: var(--colors-background--main);
-          min-height: 200vh;
-          display: grid;
-          grid-template-rows: 10rem 1fr;
-          grid-template-columns: [sidebar-start] ${isNavOpen ? "25rem" : "8rem"} [sidebar-end content-start] 1fr [content-end];
+          grid-row: 2/3;
+          grid-column: sidebar-start/sidebar-end;
+          background: var(--colors-background--sub);
         `}
       >
-        <Header setIsNavOpen={setIsNavOpen} setQuery={setQuery} />
-        <div
-          css={`
-            grid-row: 2/3;
-            grid-column: sidebar-start/sidebar-end;
-            background: var(--colors-background--sub);
-          `}
-        >
-          <Nav isNavOpen={isNavOpen} />
-        </div>
-        <main
-          css={`
-            padding: 5rem 0;
-            grid-row: 2/3;
-            grid-column: content-start / content-end;
-          `}
-        >
-          <Component {...pageProps} />
-        </main>
+        <Nav isNavOpen={isNavOpen} />
       </div>
-    </>
+      <main
+        css={`
+          padding: 5rem 0;
+          grid-row: 2/3;
+          grid-column: content-start / content-end;
+        `}
+      >
+        {children}
+      </main>
+    </div>
   );
 }
 
